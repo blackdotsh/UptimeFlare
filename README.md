@@ -1,7 +1,7 @@
 UptimeFlare
 ==============
 
-A PHP web hook to handle down notifications from uptimerobot. If a DOWN notification is received, then it'll change the A record of a domain on cloudflare to a backup IP set by you.
+A PHP web hook to handle down notifications from uptimerobot. If a DOWN notification is received, it'll change the A record of a domain on cloudflare to a backup IP set by you.
 
 <br><br>
 License: MIT<br>
