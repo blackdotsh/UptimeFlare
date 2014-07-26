@@ -8,7 +8,7 @@ License: MIT<br>
 Depenedencies: Web Server, PHP, php-curl lib
 <br><br>
 
-Setup:
+Setup: <br>
 1. I suggest you rename the php file to something obsecure. <br>
 2. Add / change the global vars section. It constents of credentials and other information that needs to be modified to your needs.  <br>
 3. Upload this script to the desired server, make sure the script is accessible via the internet. <br>
