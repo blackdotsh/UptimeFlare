@@ -16,7 +16,8 @@ as value
 for example:
 $CF_domains = array( "google.com" => "8.8.8.8,1" );
 
-sets the domain google.com's backup IP address to 8.8.8.8 and enabling cloudflare proxy (orange cloud)
+sets the domain google.com's backup IP address to 8.8.8.8 and enabling cloudflare proxy (orange cloud),
+		github.com's backip IP address to 127.0.0.1  and disabling cloudflare proxy (no orange cloud)
 */
 $CF_domains = array( "google.com" => "8.8.8.8,1",
 		"github.com" => "127.0.0.1,0");
