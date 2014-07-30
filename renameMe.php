@@ -32,14 +32,44 @@ $CF_email= "";
 //////////////////////////////////////////////////////////
 //global functions
 
-function isListedDomain ($domains, $domain){
+//checks if the domain exists in $CF_domains and the backup IP it's up via HTTP
+function checkDomain ($domains, $domain){
 	foreach ( $domains as $key => $value ){
 		if (strcmp($key, $domain) == 0 ){
-			return true;
+			$vars=explode(",",$domains["$domain"]);
+			$ip=$vars[0];
+			if (checkHost($ip)) {
+				return true;
+			} else {
+				echo "backup server unreachable via HTTP\n";
+				return false;
+			}
 		}
 	}
 	return false;
 }
+
+
+//checks if host returns "HTTP/1.1 200 OK" within a reasonable time frame
+function checkHost ($host) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $host);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	//curl_setopt($ch, CURLOPT_VERBOSE, 1);
+	curl_setopt($ch, CURLOPT_HEADER, 1);
+	curl_setopt($ch,CURLOPT_TIMEOUT,5);
+	$result=curl_exec($ch);
+
+	$headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+	$header = substr($result, 0, $headerSize);
+	if (strpos($header, "HTTP/1.1 200 OK") !== false){
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+
+}
+
 
 //interacts with CF API to switch to the backup IP
 function cfBkup ($domains, $domain, $subdomain, $cfkey, $cfemail){
@@ -100,7 +130,7 @@ if (!empty($_GET['monitorURL']) && !empty($_GET['alertType'])){
 	$checkDomain=str_replace("http://","",urldecode($_GET['monitorURL']));
 
 	//check to see if $checkURL is in the $CF_domain list and make sure it's a down alert
-	if ( isListedDomain($CF_domains, $checkDomain) && strcmp($_GET['alertType'], "1") == 0){
+	if ( checkDomain($CF_domains, $checkDomain) && strcmp($_GET['alertType'], "1") == 0){
 		//do more stuff here for subdomains
 		$FQDN=explode(".",$checkDomain);
 		$FQDN=$FQDN[sizeof($FQDN)-2].".".$FQDN[sizeof($FQDN)-1];
