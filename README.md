@@ -19,3 +19,5 @@ Setup: <br>
 5. Add this alert type to your websites. It's recommended that you have more than the PHP hook as an alert type, so you can switch it back to the primary server once it's up. With this setup, a website shouldn't have a downtime of more than ~6 minutes, assuming your DNS provider does not cache queries.
 <br><br>
 You can reach me on <a href="http://twitter.com/blackdotsh/"> twitter </a>.
+<br><br>
+If you're looking for StatusCake + Cloudflare, you can find it <https://github.com/blackdotsh/StatusCake-CloudFlare"> here </a>.
