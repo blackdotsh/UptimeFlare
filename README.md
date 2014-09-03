@@ -20,4 +20,4 @@ Setup: <br>
 <br><br>
 You can reach me on <a href="http://twitter.com/blackdotsh/"> twitter </a>.
 <br><br>
-If you're looking for StatusCake + Cloudflare, you can find it <https://github.com/blackdotsh/StatusCake-CloudFlare"> here </a>.
+If you're looking for StatusCake + Cloudflare, you can find it <a href="https://github.com/blackdotsh/StatusCake-CloudFlare"> here </a>.
