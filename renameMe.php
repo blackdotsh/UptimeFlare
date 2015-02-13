@@ -73,7 +73,7 @@ function checkHost ($host) {
 
 //interacts with CF API to switch to the backup IP
 function cfBkup ($domains, $domain, $subdomain, $cfkey, $cfemail){
-	$vars=explode(",",$domains["$domain"]);
+	$vars=explode(",",$domains["$subdomain"]);
 	//get DNSID
 	$ch= curl_init("https://www.cloudflare.com/api_json.html");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
