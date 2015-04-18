@@ -16,7 +16,9 @@ Setup: <br>
 	Create a new alert contact and select web hook. For url, put in the url to the php script and add "?key=YourKeySetInThePHPScript&".  <br>
 	If my $key was set to <b>HelloWorld</b> and I renamed my script to <b>monitorUP.php</b> which is accessible via <b>127.0.0.1</b>, then for the url I would put <br>
 	<i>http://127.0.0.1/monitorUP.php?key=HelloWorld&</i> Make sure you have the <b>&</b> at the end.  <br>
-5. Add this alert type to your websites. It's recommended that you have more than the PHP hook as an alert type, so you can switch it back to the primary server once it's up. With this setup, a website shouldn't have a downtime of more than ~6 minutes, assuming your DNS provider does not cache queries.
+5. Add this alert type to your websites. It's recommended that you have more than the PHP hook as an alert type (such as email notification), so you can switch it back to the primary server once it's up. This should be done manually (login to cloudflare and change the IP) because there might be inconsistencies between the primary and the backup server, which requires manual intervention.
+
+With this setup, a website shouldn't have a downtime of more than ~6 minutes, assuming your DNS provider does not cache queries.
 <br><br>
 You can reach me on <a href="http://twitter.com/blackdotsh/"> twitter </a>.
 <br><br>
