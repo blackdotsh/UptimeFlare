@@ -134,6 +134,10 @@ if (!empty($_GET['monitorURL']) && !empty($_GET['alertType'])){
 		//do more stuff here for subdomains
 		$FQDN=explode(".",$checkDomain);
 		$FQDN=$FQDN[sizeof($FQDN)-2].".".$FQDN[sizeof($FQDN)-1];
+		
+		//if your FQDN is seperated by 2 periods (ex: something.co.uk), uncomment the line below
+		// $FQDN=$FQDN[sizeof($FQDN)-3].".".$FQDN[sizeof($FQDN)-2].".".$FQDN[sizeof($FQDN)-1];
+		
 		echo $FQDN;
 		cfBkup ($CF_domains, $FQDN, $checkDomain, $CF_key, $CF_email);
 	} else { echo "invalid url or alert type";};
