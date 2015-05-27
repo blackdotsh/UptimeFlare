@@ -93,7 +93,7 @@ function cfBkup ($domains, $domain, $subdomain, $cfkey, $cfemail){
 			break;
 		}  	
 	}
-	if (strcmp($DNSID, "" != 0)){
+	if (strcmp($DNSID, "") != 0){
 //		echo "DNSID: ".$DNSID;
 		$ch= curl_init("https://www.cloudflare.com/api_json.html");
         	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
