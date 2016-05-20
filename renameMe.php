@@ -126,8 +126,9 @@ if (strcmp(urldecode($_GET['key']), $key) != 0){
 echo "This is a monitoring script"; //helps to ensure the web hook is correct, feel free to remove it
 
 if (!empty($_GET['monitorURL']) && !empty($_GET['alertType'])){
-	// strip http://
-	$checkDomain=str_replace("http://","",urldecode($_GET['monitorURL']));
+	// strip http(s)://	
+	$url = urldecode($_GET['monitorURL']);
+	$checkDomain = implode('/', array_slice(explode('/', preg_replace('/https?:\/\/|www./', '', $url)), 0, 1));
 
 	//check to see if $checkURL is in the $CF_domain list and make sure it's a down alert
 	if ( checkDomain($CF_domains, $checkDomain) && strcmp($_GET['alertType'], "1") == 0){
