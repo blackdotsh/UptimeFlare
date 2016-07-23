@@ -74,47 +74,56 @@ function checkHost ($host) {
 //interacts with CF API to switch to the backup IP
 function cfBkup ($domains, $domain, $subdomain, $cfkey, $cfemail){
 	$vars=explode(",",$domains["$subdomain"]);
-	//get DNSID
-	$ch= curl_init("https://www.cloudflare.com/api_json.html");
+	$headers = [ 
+		"X-Auth-Email: $cfemail",
+		"X-Auth-Key: $cfkey",
+		"Content-Type: application/json"
+	];
+	//get ZONE ID
+	$ch= curl_init("https://api.cloudflare.com/client/v4/zones?name=$domain");
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	$postVars= array('a' => 'rec_load_all', 'tkn' => "$cfkey", 'email' => "$cfemail", 'z' => "$domain");
-	curl_setopt($ch, CURLOPT_POST, 1);
-	curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postVars));
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 	$results= json_decode(curl_exec($ch), TRUE);
 	curl_close($ch);
-//	var_dump ($results);
-	$dnsList=$results['response']['recs']['objs'];
-//	var_dump ($dnsList);	
-	$DNSID="";
-	for ($i=0; $i < sizeof($dnsList); $i++){
-		if ( strcmp($dnsList[$i]['name'], $subdomain) == 0 && strcmp($dnsList[$i]['type'], "A") == 0 ){
-			$DNSID=$dnsList[$i]['rec_id'];
-			break;
-		}  	
-	}
-	if (strcmp($DNSID, "") != 0){
-//		echo "DNSID: ".$DNSID;
-		$ch= curl_init("https://www.cloudflare.com/api_json.html");
-        	curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-        	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		$postVars=array ('a' => "rec_edit", 'tkn' => "$cfkey", 'id' => "$DNSID", 'email' => "$cfemail", 
-			'z' => "$domain", 'type' => "A", 'name' => "$subdomain", 'content' => "$vars[0]", 'service_mode' => "$vars[1]", 'ttl' => "1");
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postVars));
+	//var_dump($results);
+	$zoneID=$results['result'][0]['id'];
+	
+	//get DNS Record ID
+	if ($zoneID != "" ) {
+		$ch= curl_init("https://api.cloudflare.com/client/v4/zones/$zoneID/dns_records?name=$subdomain");
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		$results= json_decode(curl_exec($ch), TRUE);
-		//var_dump ($results);
-		
-		$result=$results['result'];
-		echo "result:".$result;
-		if (strcmp($result, "success") != 0){
-			echo "an error occured in record edit for domain: ".$subdomain;
+		curl_close($ch);
+		//var_dump($results);
+		$DNSID = $results['result'][0]['id'];
+		if ($DNSID != "") {
+			$updateVars=explode("," , $domains["$subdomain"]);
+			if (strcmp($updateVars[1], "1") == 0 ) {	
+				$updateVars[1] = true;
+			}
+			else {
+				$updateVars[1] = false;
+			}
+			$PUTVars=array("id" => "$DNSID", "type" => "A", "name" => "$subdomain", "content" => "$updateVars[0]", "proxied" => $updateVars[1]);
+			$ch= curl_init("https://api.cloudflare.com/client/v4/zones/$zoneID/dns_records/$DNSID");
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+			curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($PUTVars));
+			$results= json_decode(curl_exec($ch), TRUE);
+			curl_close($ch);
+			//var_dump($results);
+			if ($results['success'] != TRUE ) {
+				echo "An error occured updating DNS reocrd for $subdomain";
+			}
 		} else {
-			//maybe write some logs saying it's successful or some sort of notification saying the record has been changed
+			echo "Failed to get DNSID for $subdomain";
 		}
-	} else { echo "error in finding DNSID"; };
+	} else {
+		echo "Failed to get zoneID for $domain";
+	}
 }
-
 //end of global functions
 ////////////////////////////////////////////////////////
 if (strcmp(urldecode($_GET['key']), $key) != 0){
